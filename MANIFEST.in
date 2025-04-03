@@ -1,0 +1,5 @@
+graft smooth_operator_agent_tools
+# Make sure LICENSE file is included in the package
+include LICENSE
+# Pruning any compiled files accidentally included
+prune **/*.pyc

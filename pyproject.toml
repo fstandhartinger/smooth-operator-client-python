@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "smooth-operator-agent-tools"
+version = "1.0.84"
+authors = [
+  { name="Smooth Operator", email="florian.standhartinger@gmail.com" }, 
+]
+description = "Python client library for the Smooth Operator agent tools API."
+# Using the standard format pointing to the LICENSE file
+license = {file = "LICENSE"}
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "requests>=2.20.0", 
+]
+
+[project.urls] 
+"Homepage" = "https://github.com/fstandhartinger/smooth-operator-python-client" 
+"Bug Tracker" = "https://github.com/fstandhartinger/smooth-operator-python-client/issues" 
+
+[tool.setuptools]
+# Include package data specified in MANIFEST.in
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["tests*", "__pycache__", "*.py[cod]", "*$py.class", "*.egg-info", "dist", "build"]
+namespaces = false
