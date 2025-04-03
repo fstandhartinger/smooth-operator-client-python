@@ -16,23 +16,9 @@ pip install smooth-operator-agent-tools
 
 ## Prerequisites
 
-### Playwright and Chrome
+### Google Chrome
 
-The Smooth Operator Agent Tools library requires Playwright and Google Chrome to be installed on the system for browser automation features to work. The library does not automatically install these dependencies.
-
-To ensure the required dependencies are installed:
-
-1. Install Node.js (if not already installed): [https://nodejs.org/](https://nodejs.org/)
-2. Install Playwright globally:
-   ```bash
-   npm install -g playwright
-   ```
-3. Install the Chromium browser for Playwright:
-   ```bash
-   npx playwright install chromium
-   ```
-
-If your application has an installer, we recommend including these steps in your installation process.
+The Smooth Operator Agent Tools library requires Google Chrome (or a compatible Chromium-based browser) to be installed on the system for browser automation features to work.
 
 ## Server Installation
 

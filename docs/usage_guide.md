@@ -20,8 +20,8 @@ To install from source:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/fstandhartinger/smooth-operator-python-client.git
-   cd smooth-operator-python-client
+   git clone https://github.com/fstandhartinger/smooth-operator-client-python.git
+   cd smooth-operator-client-python
    ```
 
 2. Install the package:
