@@ -84,8 +84,10 @@ client.chrome.get_dom()
 ## Documentation
 
 For detailed API documentation, visit:
-[https://smooth-operator.online/agent-tools-api-docs/toolserverdocs](https://smooth-operator.online/agent-tools-api-docs/toolserverdocs)
-*   **[Usage Guide (docs/usage_guide.md)](docs/usage_guide.md):** Detailed examples and explanations for common use cases.
+
+*   **[Usage Guide](docs/usage_guide.md):** Detailed examples and explanations for common use cases.
+*   **[Example Project](https://github.com/fstandhartinger/smooth-operator-example-python):** Download, follow step by step instructions and have your first automation running in mintes.
+*   **[Documentation](https://smooth-operator.online/agent-tools-api-docs/toolserverdocs):** Describes the endpoints of the local tools server the python client library communicates with.
 
 ## License
 
