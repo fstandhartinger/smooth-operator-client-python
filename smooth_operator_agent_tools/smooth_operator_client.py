@@ -311,23 +311,11 @@ class SmoothOperatorClient:
             return os.path.join(os.path.expanduser("~"), ".smooth-operator", "agent-tools-server")
 
     def _get_appdata_dir(self) -> Path:
-        """Gets the appropriate application data directory based on the OS."""
-        system = platform.system()
-        if system == "Windows":
-            appdata = os.getenv('APPDATA')
-            if appdata:
-                return Path(appdata)
-            return Path.home() / "AppData" / "Roaming" # Fallback
-        # Add other OS logic here if needed (macOS, Linux)
-        # else:
-        #     # Fallback for unsupported OS or if needed
-        #     logger.warning(f"Unsupported OS {system} for standard AppData. Using fallback dir.")
-        #     package_dir = Path(pkg_resources.resource_filename("smooth_operator_agent_tools", "")).parent
-        #     fallback_dir = package_dir / ".smooth_operator_data"
-        #     fallback_dir.mkdir(exist_ok=True)
-        #     return fallback_dir
-        # For now, stick to the original logic for non-windows:
-        return Path(os.path.expanduser("~")) / ".smooth-operator" / "agent-tools-server"
+        """Gets the appropriate application data directory based on the OS."""        
+        appdata = os.getenv('APPDATA')
+        if appdata:
+            return Path(appdata)
+        return Path.home() / "AppData" / "Roaming"        
 
     def _ensure_server_installed(self) -> str:
         """
