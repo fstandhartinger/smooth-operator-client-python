@@ -8,6 +8,8 @@ The Smooth Operator Agent Tools are a powerful toolkit that handles the complex 
 
 This Python library provides a convenient wrapper around the Smooth Operator Tools Server API, allowing you to easily integrate these capabilities into your Python applications.
 
+All features can be tested and explored through a convenient Windows user interface before implementing them in code. Try them out at [Smooth Operator Tools UI](https://smooth-operator.online/agent-tools-api-docs/toolserverdocs#windows-app).
+
 ## Installation
 
 ```bash
