@@ -3,8 +3,8 @@ API classes for the Smooth Operator Agent Tools.
 """
 
 from typing import Dict, List, Optional, Any, Union, TYPE_CHECKING
-# Import the models module with an alias
 from .models import models as M
+from .models.models import ExistingChromeInstanceStrategy
 
 # Use TYPE_CHECKING to avoid circular import for type hinting the client
 if TYPE_CHECKING:
@@ -95,19 +95,22 @@ class SystemApi:
         # Note: The server endpoint is under /automation/, not /system/
         return self._client._post_internal("/tools-api/automation/get-details", expected_type=M.WindowDetailInfosDTO, data={"windowId": window_id})
 
-    def open_chrome(self, url: Optional[str] = None, strategy: Optional[str] = None) -> Optional[M.SimpleResponse]: # Update return type hint
+    def open_chrome(self, url: Optional[str] = None, strategy: Optional[ExistingChromeInstanceStrategy] = ExistingChromeInstanceStrategy.THROW_ERROR) -> Optional[M.SimpleResponse]: # Updated signature and type hint
         """
         Opens Chrome browser (Playwright-managed instance).
 
         Args:
-            url: Optional URL to navigate to immediately
-            strategy: Optional strategy for opening Chrome
+            url: Optional URL to navigate to immediately.
+            strategy: Strategy for handling existing Chrome instances.
+                      Defaults to ExistingChromeInstanceStrategy.THROW_ERROR (0).
+                      Possible values: THROW_ERROR (0), FORCE_CLOSE (1), START_WITHOUT_USER_PROFILE (2).
 
         Returns:
-            SimpleResponse indicating success or failure or None on error
+            SimpleResponse indicating success or failure or None on error.
         """
-        # Use _post_internal with expected_type
-        return self._client._post_internal("/tools-api/system/open-chrome", expected_type=M.SimpleResponse, data={"url": url, "strategy": strategy})
+        # Use _post_internal with expected_type, send strategy as integer value
+        payload = {"url": url, "strategy": strategy.value if strategy is not None else ExistingChromeInstanceStrategy.THROW_ERROR.value}
+        return self._client._post_internal("/tools-api/system/open-chrome", expected_type=M.SimpleResponse, data=payload)
 
     def open_application(self, app_name_or_path: str) -> Optional[M.SimpleResponse]: # Update return type hint
         """
@@ -438,19 +441,22 @@ class ChromeApi:
         """
         self._client = client
 
-    def open_chrome(self, url: Optional[str] = None, strategy: Optional[str] = None) -> Optional[M.SimpleResponse]: # Update return type hint
+    def open_chrome(self, url: Optional[str] = None, strategy: Optional[ExistingChromeInstanceStrategy] = ExistingChromeInstanceStrategy.THROW_ERROR) -> Optional[M.SimpleResponse]: # Updated signature and type hint
         """
         Opens Chrome browser (Playwright-managed instance).
 
         Args:
-            url: Optional URL to navigate to immediately
-            strategy: Optional strategy for opening Chrome
+            url: Optional URL to navigate to immediately.
+            strategy: Strategy for handling existing Chrome instances.
+                      Defaults to ExistingChromeInstanceStrategy.THROW_ERROR (0).
+                      Possible values: THROW_ERROR (0), FORCE_CLOSE (1), START_WITHOUT_USER_PROFILE (2).
 
         Returns:
-            SimpleResponse indicating success or failure or None on error
+            SimpleResponse indicating success or failure or None on error.
         """
-        # Use _post_internal with expected_type
-        return self._client._post_internal("/tools-api/system/open-chrome", expected_type=M.SimpleResponse, data={"url": url, "strategy": strategy})
+        # Use _post_internal with expected_type, send strategy as integer value
+        payload = {"url": url, "strategy": strategy.value if strategy is not None else ExistingChromeInstanceStrategy.THROW_ERROR.value}
+        return self._client._post_internal("/tools-api/system/open-chrome", expected_type=M.SimpleResponse, data=payload)
 
     def explain_current_tab(self) -> Optional[M.ChromeTabDetails]: # Update return type hint
         """
@@ -546,7 +552,6 @@ class ChromeApi:
             Action response with DOM content or None on error
         """
         # Use _post_internal with expected_type
-        # The response might contain the DOM in the 'Data' field, ActionResponse handles this
         return self._client._post_internal("/tools-api/chrome/get-dom", expected_type=M.ActionResponse, data={})
 
     def get_text(self) -> Optional[M.ActionResponse]: # Update return type hint
@@ -557,7 +562,6 @@ class ChromeApi:
             Action response with text content or None on error
         """
         # Use _post_internal with expected_type
-        # The response might contain the text in the 'Data' field, ActionResponse handles this
         return self._client._post_internal("/tools-api/chrome/get-text", expected_type=M.ActionResponse, data={})
 
     def execute_script(self, script: str) -> Optional[M.ChromeScriptResponse]: # Update return type hint
@@ -584,11 +588,7 @@ class ChromeApi:
             ChromeScriptResponse with execution result or None on error
         """
         # Use _post_internal with expected_type
-        return self._client._post_internal(
-            "/tools-api/chrome/generate-and-execute-script",
-            expected_type=M.ChromeScriptResponse,
-            data={"taskDescription": task_description}
-        )
+        return self._client._post_internal("/tools-api/chrome/generate-and-execute-script", expected_type=M.ChromeScriptResponse, data={"taskDescription": task_description})
 
     def __str__(self) -> str:
         """Return a string representation of the ChromeApi class."""
@@ -614,21 +614,20 @@ class AutomationApi:
 
         Args:
             app_name_or_path: Full path to executable or application name,
-                             alternatively exe name if in path (e.g. notepad, calc)
+                             alternatively exe name if in path (e.g. notepad, calc).
 
         Returns:
             SimpleResponse indicating success or failure or None on error
         """
         # Use _post_internal with expected_type
-        # Note: This endpoint exists under /system/, not /automation/
         return self._client._post_internal("/tools-api/system/open-application", expected_type=M.SimpleResponse, data={"appNameOrPath": app_name_or_path})
 
     def invoke(self, element_id: str) -> Optional[M.SimpleResponse]: # Update return type hint
         """
-        Invokes default action on Windows UI element (e.g. click button).
+        Invokes default action on Windows UI element (e.g. click button) by Element ID.
 
         Args:
-            element_id: Element ID from get_overview/get_details
+            element_id: Element ID from get_overview/get_window_details
 
         Returns:
             SimpleResponse indicating success or failure or None on error
@@ -638,10 +637,10 @@ class AutomationApi:
 
     def set_value(self, element_id: str, value: str) -> Optional[M.SimpleResponse]: # Update return type hint
         """
-        Set the value of a UI element.
+        Set the value of a UI element by Element ID.
 
         Args:
-            element_id: ID of the UI element
+            element_id: ID of the UI element (from get_overview/get_window_details)
             value: Value to set
 
         Returns:
@@ -726,17 +725,13 @@ class CodeApi:
 
         Args:
             task_description: Description of what the C# code should do,
-                             include error feedback if a previous try wasn't successful
+                              include error feedback if a previous try wasn't successful
 
         Returns:
             CSharpCodeResponse with execution result or None on error
         """
         # Use _post_internal with expected_type
-        return self._client._post_internal(
-            "/tools-api/code/csharp/generate-and-execute",
-            expected_type=M.CSharpCodeResponse,
-            data={"taskDescription": task_description}
-        )
+        return self._client._post_internal("/tools-api/code/csharp/generate-and-execute", expected_type=M.CSharpCodeResponse, data={"taskDescription": task_description})
 
     def __str__(self) -> str:
         """Return a string representation of the CodeApi class."""

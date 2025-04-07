@@ -189,6 +189,19 @@ class MechanismType(str, Enum):
     # No need for GetDescription extension method like in C#
 
 
+class ExistingChromeInstanceStrategy(int, Enum):
+    """
+    Strategy to use when an existing Chrome instance is already running with the same user profile.
+    Mirrors the C# enum.
+    """
+    THROW_ERROR = 0
+    FORCE_CLOSE = 1
+    START_WITHOUT_USER_PROFILE = 2
+
+    def __str__(self) -> str:
+        return self.name # Return the enum member name for string representation
+
+
 class Point(BaseModel):
     """Represents a point on the screen with X and Y coordinates."""
     def __init__(self, x: int, y: int):
@@ -201,14 +214,15 @@ class Point(BaseModel):
 
 class ActionResponse(BaseModel):
     """Generic response for action endpoints."""
-    def __init__(self, success: bool, message: Optional[str], data: Optional[Dict[str, Any]] = None):
+    def __init__(self, success: bool, message: Optional[str], data: Optional[Dict[str, Any]] = None, result_value: Optional[str] = None): # Added result_value
         self.success = success
         self.message = message
-        # Captures extra fields similar to C#'s [JsonExtensionData]
+        # Captures extra fields similar to C#'s [JsonExtensionData] - DEPRECATED for simple string returns
         self.data = data if data is not None else {}
+        self.result_value = result_value # Added property
 
     def __str__(self) -> str:
-        return f"ActionResponse(Success={self.success}, Message='{self.message}', Data={self.data})"
+        return f"ActionResponse(Success={self.success}, Message='{self.message}', ResultValue='{self.result_value}', Data={self.data})" # Updated str representation
 
 
 class ScreenshotResponse(BaseModel):
@@ -511,43 +525,42 @@ class DesktopIconDTO(BaseModel):
 
 class InstalledProgramDTO(BaseModel):
     """Information about an installed program."""
-    def __init__(self, name: Optional[str] = None, executable_path: Optional[str] = None):
+    def __init__(self, name: Optional[str] = None, version: Optional[str] = None, install_location: Optional[str] = None):
         self.name = name
-        self.executable_path = executable_path
+        self.version = version
+        self.install_location = install_location
 
     def __str__(self) -> str:
-        return f"InstalledProgramDTO(Name='{self.name}', Path='{self.executable_path}')"
+        return f"InstalledProgramDTO(Name='{self.name}', Version='{self.version}')"
 
 
 class OverviewResponse(BaseModel):
     """Response from the system overview endpoint."""
     def __init__(self, windows: Optional[List[WindowInfoDTO]] = None,
-                 chrome_instances: Optional[List[ChromeOverview]] = None,
                  focus_info: Optional[FocusInformation] = None,
-                 top_pinned_taskbar_icons: Optional[List[TaskbarIconDTO]] = None,
-                 top_desktop_icons: Optional[List[DesktopIconDTO]] = None,
-                 top_installed_programs: Optional[List[InstalledProgramDTO]] = None,
+                 chrome_instances: Optional[List[ChromeOverview]] = None,
+                 taskbar_icons: Optional[List[TaskbarIconDTO]] = None,
+                 desktop_icons: Optional[List[DesktopIconDTO]] = None,
+                 installed_programs: Optional[List[InstalledProgramDTO]] = None,
                  important_note: Optional[str] = None):
         self.windows = windows if windows is not None else []
-        self.chrome_instances = chrome_instances if chrome_instances is not None else []
         self.focus_info = focus_info
-        self.top_pinned_taskbar_icons = top_pinned_taskbar_icons if top_pinned_taskbar_icons is not None else []
-        self.top_desktop_icons = top_desktop_icons if top_desktop_icons is not None else []
-        self.top_installed_programs = top_installed_programs if top_installed_programs is not None else []
+        self.chrome_instances = chrome_instances if chrome_instances is not None else []
+        self.taskbar_icons = taskbar_icons if taskbar_icons is not None else []
+        self.desktop_icons = desktop_icons if desktop_icons is not None else []
+        self.installed_programs = installed_programs if installed_programs is not None else []
         self.important_note = important_note
 
     def __str__(self) -> str:
-        windows_count = len(self.windows) if self.windows else 0
-        chrome_count = len(self.chrome_instances) if self.chrome_instances else 0
-        focus_str = str(self.focus_info) if self.focus_info else "N/A"
-        return f"Overview: {windows_count} Windows, {chrome_count} Chrome Instances. Focus: {focus_str}"
+        focus_str = str(self.focus_info) if self.focus_info else "None"
+        return f"OverviewResponse(Windows={len(self.windows)}, Focus={focus_str}, ChromeInstances={len(self.chrome_instances)})"
 
 
 class SimpleResponse(BaseModel):
-    """Simple response with message, potentially internal message."""
+    """Simple response indicating success or failure, often used for actions without complex return data."""
     def __init__(self, message: Optional[str] = None, internal_message: Optional[str] = None):
         self.message = message
         self.internal_message = internal_message
 
     def __str__(self) -> str:
-        return f"SimpleResponse(Message='{self.message}', InternalMessage='{self.internal_message}')"
+        return f"SimpleResponse(Message='{self.message}')"
