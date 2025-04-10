@@ -1,3 +1,7 @@
+# If you are looking for the MCP server: [find it here](https://smooth-operator.online/agent-tools).
+
+If you are looking for the Python Library, go on.. ;)
+
 # Smooth Operator Agent Tools - Python Library
 
 This is the official Python library implementation for Smooth Operator Agent Tools, a state-of-the-art toolkit for programmers developing Computer Use Agents on Windows systems.

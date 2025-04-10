@@ -558,9 +558,10 @@ class OverviewResponse(BaseModel):
 
 class SimpleResponse(BaseModel):
     """Simple response indicating success or failure, often used for actions without complex return data."""
-    def __init__(self, message: Optional[str] = None, internal_message: Optional[str] = None):
+    def __init__(self, success: bool = True, message: Optional[str] = None, internal_message: Optional[str] = None):
+        self.success = success # Added success, defaults to True like C#
         self.message = message
         self.internal_message = internal_message
 
     def __str__(self) -> str:
-        return f"SimpleResponse(Message='{self.message}')"
+        return f"SimpleResponse(Success={self.success}, Message='{self.message}')"
