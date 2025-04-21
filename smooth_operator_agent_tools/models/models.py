@@ -276,17 +276,21 @@ class ChromeTab(BaseModel):
 
 
 class ChromeTabDetails(BaseModel):
-    """Detailed information about a Chrome tab."""
-    def __init__(self, title: Optional[str] = None, url: Optional[str] = None, content: Optional[str] = None,
-                 elements: Optional[List[Dict[str, Any]]] = None, summary: Optional[str] = None):
-        self.title = title
-        self.url = url
-        self.content = content
-        self.elements = elements if elements is not None else []
-        self.summary = summary
+    """Detailed information about a Chrome tab (matches server-side model)."""
+    def __init__(self, current_tab_title: Optional[str] = None, current_tab_index: Optional[int] = None,
+                 current_chrome_tab_most_relevant_elements: Optional[List['ChromeElementInfo']] = None,
+                 chrome_instances: Optional[List['ChromeOverview']] = None, note: Optional[str] = None):
+        self.current_tab_title = current_tab_title
+        self.current_tab_index = current_tab_index
+        self.current_chrome_tab_most_relevant_elements = current_chrome_tab_most_relevant_elements or []
+        self.chrome_instances = chrome_instances or []
+        self.note = note
 
     def __str__(self) -> str:
-        return f"ChromeTabDetails(Title='{self.title}', Url='{self.url}', HasContent={self.content is not None}, ElementCount={len(self.elements)}, HasSummary={self.summary is not None})"
+        return (f"ChromeTabDetails(Title='{self.current_tab_title}', Index={self.current_tab_index}, "
+                f"ElementCount={len(self.current_chrome_tab_most_relevant_elements)}, "
+                f"ChromeInstances={len(self.chrome_instances)}, Note={self.note})")
+
 
 
 class ChromeScriptResponse(ActionResponse):
